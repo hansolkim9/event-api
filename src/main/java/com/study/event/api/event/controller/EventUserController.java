@@ -2,14 +2,15 @@ package com.study.event.api.event.controller;
 
 import com.study.event.api.event.dto.request.EventUserSaveDto;
 import com.study.event.api.event.dto.request.LoginRequestDto;
+import com.study.event.api.event.dto.response.LoginResponseDto;
 import com.study.event.api.event.service.EventUserService;
 import com.study.event.api.exception.LoginFailException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 @RestController
@@ -22,7 +23,7 @@ public class EventUserController {
 
     // 이메일 중복확인 API
     @GetMapping("/check-email")
-    public ResponseEntity<?> checkEMail(String email) {
+    public ResponseEntity<?> checkEmail(String email) {
         boolean isDuplicate = eventUserService.checkEmailDuplicate(email);
 
         return ResponseEntity.ok().body(isDuplicate);
@@ -31,6 +32,7 @@ public class EventUserController {
     // 인증 코드 검증 API
     @GetMapping("/code")
     public ResponseEntity<?> verifyCode(String email, String code) {
+
         log.info("{}'s verify code is [ {} ]", email, code);
         boolean isMatch = eventUserService.isMatchCode(email, code);
 
@@ -52,17 +54,20 @@ public class EventUserController {
         return ResponseEntity.ok().body("saved success");
     }
 
+
     @PostMapping("/sign-in")
     public ResponseEntity<?> signIn(@RequestBody LoginRequestDto dto) {
 
         try {
-            eventUserService.authenticate(dto);
-            return ResponseEntity.ok().body("login success");
+            LoginResponseDto responseDto = eventUserService.authenticate(dto);
+            return ResponseEntity.ok().body(responseDto);
         } catch (LoginFailException e) {
             // 서비스에서 예외발생 (로그인 실패)
             String errorMessage = e.getMessage();
             return ResponseEntity.status(422).body(errorMessage);
         }
+
     }
+
 
 }
