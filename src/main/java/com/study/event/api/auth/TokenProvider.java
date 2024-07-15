@@ -70,9 +70,10 @@ public class TokenProvider {
     /**
      * 클라이언트가 전송한 토큰을 디코딩하여 토큰의 서명 위조 여부를 확인
      * 그리고 토큰을 JSON으로 파싱하여 안에 들어있는 클레임(토큰 정보)을 리턴
-     * @param token
+     * @param token - 클라이언트가 보낸 토큰
+     * @return - 토큰에 들어있는 인증정보(이메일, 권한..)를 리턴 - 회원 식별 ID
      */
-    public void validateAndGetTokenInfo(String token) {
+    public String validateAndGetTokenInfo(String token) {
 
         Claims claims = Jwts.parserBuilder()
                 // 토큰 발급자의 발급 당시 서명을 넣음
@@ -86,5 +87,8 @@ public class TokenProvider {
                 .getBody();
 
         log.info("claims: {}", claims);
+
+        // 토큰에 인증된 회원 아이디
+        return claims.getSubject();
     }
 }
