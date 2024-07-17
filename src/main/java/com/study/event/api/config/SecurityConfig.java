@@ -49,7 +49,7 @@ public class SecurityConfig {
                 // /events/*  -> 뒤에 딱 하나만
                 // /events/**  -> 뒤에 여러개
                 .antMatchers(HttpMethod.DELETE, "/events/*").hasAuthority("ADMIN")
-
+                .antMatchers(HttpMethod.PUT, "/auth/promote").hasAuthority("COMMON")
                 // 아래의 URL 요청은 모두 허용
                 .antMatchers("/", "/auth/**").permitAll()
                 // 나머지 요청은 전부 인증(로그인) 후 진행
