@@ -52,8 +52,13 @@ public class EventController {
             @AuthenticationPrincipal TokenUserInfo userInfo,
             @RequestBody EventSaveDto dto
     ) {
-        eventService.saveEvent(dto, userInfo.getUserId());
-        return ResponseEntity.ok().body("event saved!");
+        try {
+            eventService.saveEvent(dto, userInfo.getUserId());
+            return ResponseEntity.ok().body("event saved!");
+        } catch (IllegalStateException e) {
+            log.warn(e.getMessage());
+            return ResponseEntity.status(401).body(e.getMessage());
+        }
     }
 
     // 단일 조회 요청
